@@ -35,17 +35,18 @@ def fight:
     upgr_order: str = ''  # 'sssff'
     position: Position = Position(0, 0)
     player_clan: int = 0
-    # cost_of_upgr: Any = [10, 20, 40] = 10*(2**(cur_apgr_count - 1))
 
-    def upgrade(self):
+    def upgrade(self, upgr='*'):
+        UPGR = upgr[:]
         '''upgrades current Cell in the oreder from self.upgr_order
         if there`s not enough energy, the Cell doesn`t do anything
         to upgrade your cell characteristic to i level ypu need 10*(2**(i - 1)) energy'''
-        upgr = self.upgr_order[self.num_to_upgrade:min(
-            self.num_to_upgrade+1, len(self.num_to_upgrade))]
+        if(UPGR == '*'):
+            upgr = self.upgr_order[self.num_to_upgrade:min(
+                self.num_to_upgrade+1, len(self.num_to_upgrade))]
         cur_upgr_count = min(self.upgr_order[:min(
             self.num_to_upgrade+1, len(self.num_to_upgrade))].count(upgr), 3)
-        cost_of_upgr = 10*(2**(cur_upgr_count - 1))
+        cost_of_upgr = 5*(2**(cur_upgr_count - 1))
         if self.energy > cost_of_upgr:
             if (upgr == '' or cur_upgr_count > 3):
                 return
@@ -53,13 +54,12 @@ def fight:
                 self.speed_level += 1
             elif upgr == 'f':
                 self.fight_level += 1
-            elif upgr == 'd':
-                self.deviding_level += 1
             else:
                 self.upgrade_health()
-            self.num_to_upgrade = min(
-                self.num_to_upgrade + 1, len(self.upgr_order))
-            self.energy -= self.cost_of_upgr
+            if(UPGR == '*'):
+                self.num_to_upgrade = min(
+                    self.num_to_upgrade + 1, len(self.upgr_order))
+            self.energy -= cost_of_upgr
 
     def upgrade_health(self):
         '''upgrades healt'''
