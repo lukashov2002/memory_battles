@@ -2,7 +2,7 @@
 ===========
 This script draws the main window of the game and updates it calling other functions
 ===========
-You need to install arcade library t run this script
+You need to install arcade library to run this script
 '''
 import arcade
 import PySimpleGUI as sg
@@ -32,8 +32,8 @@ SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 SCREEN_TITLE = 'Array Backed Grid Example'
 field = [[random.randint(0, 4) for i in range(21)] for j in range(21)]
 players = [import_module('player_one'), import_module('player_two')]
-cells = [player.Cell(position=player.Position(5, 5), hp=15, player_clan=0),
-         player.Cell(position=player.Position(-5, -5), hp=15, player_clan=1)]
+cells = [player.Cell(position=player.Position(5, 5), hp=25, player_clan=0),
+         player.Cell(position=player.Position(-5, -5), hp=25, player_clan=1)]
 #STEP = 0
 
 
@@ -74,6 +74,12 @@ class MyGame(arcade.Window):
                 if self.grid[row][column] == (0, 1) or self.grid[row][column] == (1, 1):
                     arcade.draw_circle_filled(
                         x + WIDTH // 4, y + HEIGHT // 4, WIDTH // 4, arcade.color.BLUE)
+
+                if field[row][column] > 0:  # written by MRHEDGEHOGMR
+                    arcade.draw_circle_filled(  # written by MRHEDGEHOGMR
+                        x + WIDTH // 4, y - HEIGHT // 4, WIDTH // 4, arcade.color.ORANGE)  # written by MRHEDGEHOGMR
+                    arcade.draw_text(  # written by MRHEDGEHOGMR
+                        str(field[row][column]), x + WIDTH // 6, y - HEIGHT // 2, arcade.color.BLACK, font_size=12)  # written by MRHEDGEHOGMR
 
     def on_update(self, delta_time):
         '''updates logic for redrawing'''
