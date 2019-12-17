@@ -27,26 +27,38 @@ def fight:
 ================
     make a fight between two Cells
 '''
-    hp: int = 15
+    hp: int = 35
     energy: int = 1
     speed_level: int = 1
     fight_level: int = 1
+    force: int = 10
     num_to_upgrade: int = 0
     upgr_order: str = ''  # 'sssff'
     position: Position = Position(0, 0)
     player_clan: int = 0
 
-    def upgrade(self, upgr='*'):
-        UPGR = upgr[:]
-        '''upgrades current Cell in the oreder from self.upgr_order
+    def upgrade_speed(self):
+        '''Upgrades speed of chosen Cell. You need to have
+        3 * (2**(speed_level - 1)) energy to upgrade'''
+        if self.energy >= 3 * (2**(self.speed_level - 1)) and self.speed_level < 3:
+            self.speed_level += 1
+            self.energy -= 3 * (2**(self.speed_level - 1))
+
+    def upgrade_force(self):
+        '''Upgrades force of chosen Cell. You need to have
+        3 * (2**(fight_level - 1)) energy to upgrade'''
+        if self.energy >= 3 * (2**(self.fight_level - 1)) and self.fight_level < 3:
+            self.fight_level += 1
+            self.force += 5
+            self.energy -= 3 * (2**(self.fight_level - 1))
+
+    def upgrade_in_order(self):
+        '''upgrades current Cell in the order from self.upgr_order
         if there`s not enough energy, the Cell doesn`t do anything
-        to upgrade your cell characteristic to i level ypu need 10*(2**(i - 1)) energy'''
-        if(UPGR == '*'):
-            upgr = self.upgr_order[self.num_to_upgrade:min(
-                self.num_to_upgrade+1, len(self.num_to_upgrade))]
-        cur_upgr_count = min(self.upgr_order[:min(
-            self.num_to_upgrade+1, len(self.num_to_upgrade))].count(upgr), 3)
-        cost_of_upgr = 5*(2**(cur_upgr_count - 1))
+        to upgrade your cell characteristic to i level ypu need 3*(2**(i - 1)) energy'''
+        upgr = self.upgr_order[self.num_to_upgrade: self.num_to_upgrade+1]
+        cur_upgr_count = self.upgr_order[:self.num_to_upgrade+1].count(upgr)
+        cost_of_upgr = 3*(2**(cur_upgr_count - 1))
         if self.energy > cost_of_upgr:
             if (upgr == '' or cur_upgr_count > 3):
                 return
@@ -54,18 +66,18 @@ def fight:
                 self.speed_level += 1
             elif upgr == 'f':
                 self.fight_level += 1
+                self.force += 5
             else:
                 self.upgrade_health()
-            if(UPGR == '*'):
-                self.num_to_upgrade = min(
-                    self.num_to_upgrade + 1, len(self.upgr_order))
+                return
+            self.num_to_upgrade += 1
             self.energy -= cost_of_upgr
 
     def upgrade_health(self):
-        '''upgrades healt'''
-        if self.energy > 10:
+        '''upgrades health. You need 8 energy to upgrade'''
+        if self.energy > 8:
             self.hp += 2
-            self.energy -= 10
+            self.energy -= 8
 
     def move(self, direction: str):
         '''moves current cell
@@ -94,6 +106,6 @@ def fight(first: Cell, second: Cell):
         probable.append(8)
         probable.append(9)
         probable.append(8)
-        first.hp -= second.fight_level * probable[random.randint(0, 15)] // 10
-        second.hp -= first.fight_level * probable[random.randint(0, 15)] // 10
+        first.hp -= second.force * probable[random.randint(0, 15)] // 10
+        second.hp -= first.force * probable[random.randint(0, 15)] // 10
         first.hp, second.hp = max(0, first.hp), max(0, second.hp)
