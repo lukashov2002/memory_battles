@@ -56,7 +56,7 @@ class BattleTest(unittest.TestCase):
         self.assertEqual(cell1.hp, 0)
 
     def test_check_fightings_1(self):
-        cells = [player.Cell(hp=2, position=player.Position(9, 0)),
+        cells = [player.Cell(hp=200, position=player.Position(9, 0)),
                  player.Cell(hp=12, position=player.Position(9, 0)),
                  player.Cell(hp=2, position=player.Position(10, 0))]
         coord = [cl.position for cl in cells]
@@ -65,9 +65,9 @@ class BattleTest(unittest.TestCase):
 
     def test_check_fightings_2(self):
         cells = [player.Cell(hp=2, position=player.Position(9, 0)),
-                 player.Cell(hp=12, position=player.Position(9, 0)),
+                 player.Cell(hp=120, position=player.Position(9, 0)),
                  player.Cell(hp=5, position=player.Position(10, 0)),
-                 player.Cell(hp=20, position=player.Position(10, 0)),
+                 player.Cell(hp=200, position=player.Position(10, 0)),
                  player.Cell(hp=5, position=player.Position(10, 1))]
         coord = [cl.position for cl in cells]
         battle.check_fightings(coord, cells)
@@ -75,13 +75,44 @@ class BattleTest(unittest.TestCase):
 
     def test_check_fightings_three_fighting(self):
         cells = [player.Cell(hp=2, position=player.Position(9, 0)),
-                 player.Cell(hp=12, position=player.Position(9, 0)),
+                 player.Cell(hp=120, position=player.Position(9, 0)),
                  player.Cell(hp=5, position=player.Position(10, 0)),
-                 player.Cell(hp=20, position=player.Position(10, 0)),
-                 player.Cell(hp=10, position=player.Position(10, 0))]
+                 player.Cell(hp=200, position=player.Position(10, 0)),
+                 player.Cell(hp=100, position=player.Position(10, 0))]
         coord = [cl.position for cl in cells]
         battle.check_fightings(coord, cells)
         self.assertEqual(battle.check_alive_count(cells), 2)
+
+    def test_player_upgrade_force(self):
+        t = player.Cell(hp=2, energy=105, position=player.Position(9, 0))
+        t.upgrade_force()
+        self.assertEqual(t.fight_level, 2)
+
+    def test_player_upgrade_force_not_enough_energy(self):
+        t = player.Cell(hp=2, energy=1, position=player.Position(9, 0))
+        t.upgrade_force()
+        self.assertEqual(t.fight_level, 1)\
+
+
+    def test_player_upgrade_speed(self):
+        t = player.Cell(hp=2, energy=105, position=player.Position(9, 0))
+        t.upgrade_speed()
+        self.assertEqual(t.speed_level, 2)
+
+    def test_player_upgrade_speed_not_enough_energy(self):
+        t = player.Cell(hp=2, energy=1, position=player.Position(9, 0))
+        t.upgrade_speed()
+        self.assertEqual(t.speed_level, 1)
+
+    def test_player_upgrade_health(self):
+        t = player.Cell(hp=2, energy=105, position=player.Position(9, 0))
+        t.upgrade_health()
+        self.assertEqual(t.hp, 4)
+
+    def test_player_upgrade_healt_not_enough_energy(self):
+        t = player.Cell(hp=2, energy=1, position=player.Position(9, 0))
+        t.upgrade_health()
+        self.assertEqual(t.hp, 2)
 
 
 if __name__ == "__main__":
